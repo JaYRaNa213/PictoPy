@@ -47,8 +47,8 @@ export const MediaInfoPanel: React.FC<MediaInfoPanelProps> = ({
   };
 
   const handleLocationClick = async () => {
-    if (currentImage?.metadata?.latitude && currentImage?.metadata?.longitude) {
-      const { latitude, longitude } = currentImage.metadata;
+    if (currentImage?.metadata?.gps) {
+      const { latitude, longitude } = currentImage.metadata.gps;
       const url = `https://maps.google.com/?q=${latitude},${longitude}`;
       try {
         await open(url);
@@ -105,15 +105,14 @@ export const MediaInfoPanel: React.FC<MediaInfoPanelProps> = ({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs text-white/50">Location</p>
-            {currentImage?.metadata?.latitude &&
-            currentImage?.metadata?.longitude ? (
+            {currentImage?.metadata?.gps ? (
               <button
                 type="button"
                 onClick={handleLocationClick}
                 className="flex w-full cursor-pointer items-center truncate text-left font-medium text-white hover:underline"
-                title={`Lat: ${currentImage.metadata.latitude}, Lon: ${currentImage.metadata.longitude}`}
+                title={`Lat: ${currentImage.metadata.gps.latitude}, Lon: ${currentImage.metadata.gps.longitude}`}
               >
-                {`Lat: ${currentImage.metadata.latitude.toFixed(4)}, Lon: ${currentImage.metadata.longitude.toFixed(4)}`}
+                {`Lat: ${currentImage.metadata.gps.latitude.toFixed(4)}, Lon: ${currentImage.metadata.gps.longitude.toFixed(4)}`}
                 <SquareArrowOutUpRight className="ml-1 h-[14px] w-[14px]" />
               </button>
             ) : (

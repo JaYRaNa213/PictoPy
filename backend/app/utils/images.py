@@ -462,8 +462,10 @@ def image_util_extract_metadata(image_path: str) -> dict:
             }
 
             if latitude is not None and longitude is not None:
-                metadata_dict["latitude"] = latitude
-                metadata_dict["longitude"] = longitude
+                metadata_dict["gps"] = {
+                    "latitude": latitude,
+                    "longitude": longitude
+                }
 
             return metadata_dict
 

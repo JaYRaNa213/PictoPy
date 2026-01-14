@@ -13,6 +13,11 @@ router = APIRouter()
 
 
 # Response Models
+class GPSModel(BaseModel):
+    latitude: float
+    longitude: float
+
+
 class MetadataModel(BaseModel):
     name: str
     date_created: Optional[str]
@@ -21,8 +26,7 @@ class MetadataModel(BaseModel):
     file_location: str
     file_size: int
     item_type: str
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    gps: Optional[GPSModel] = None
     location: Optional[str] = None
 
 

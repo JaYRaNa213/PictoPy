@@ -1,49 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   ChronologicalGallery,
   MonthMarker,
 } from '@/components/Media/ChronologicalGallery';
 import TimelineScrollbar from '@/components/Timeline/TimelineScrollbar';
-import { Image } from '@/types/Media';
-import { setImages } from '@/features/imageSlice';
 import { selectImages } from '@/features/imageSelectors';
-import { usePictoQuery } from '@/hooks/useQueryExtension';
-import { fetchAllImages } from '@/api/api-functions';
 import { RootState } from '@/app/store';
 import { EmptyGalleryState } from '@/components/EmptyStates/EmptyGalleryState';
-import { useMutationFeedback } from '@/hooks/useMutationFeedback';
+import { useImagesStore, selectFilteredImages } from '@/store/imagesStore';
+import { FilteredEmptyState } from '@/components/EmptyStates/FilteredEmptyState';
 
 export const Home = () => {
-  const dispatch = useDispatch();
   const images = useSelector(selectImages);
   const scrollableRef = useRef<HTMLDivElement>(null);
   const [monthMarkers, setMonthMarkers] = useState<MonthMarker[]>([]);
   const searchState = useSelector((state: RootState) => state.search);
   const isSearchActive = searchState.active;
 
-  const { data, isLoading, isSuccess, isError, error } = usePictoQuery({
-    queryKey: ['images'],
-    queryFn: () => fetchAllImages(),
-    enabled: !isSearchActive,
-  });
-
-  useMutationFeedback(
-    { isPending: isLoading, isSuccess, isError, error },
-    {
-      loadingMessage: 'Loading images',
-      showSuccess: false,
-      errorTitle: 'Error',
-      errorMessage: 'Failed to load images. Please try again later.',
-    },
-  );
-
-  useEffect(() => {
-    if (!isSearchActive && isSuccess) {
-      const images = data?.data as Image[];
-      dispatch(setImages(images));
-    }
-  }, [data, isSuccess, dispatch, isSearchActive]);
+  /* Get filtered images from Zustand */
+  const filteredImages = useImagesStore(selectFilteredImages);
+  const mapBounds = useImagesStore((state) => state.mapBounds);
+  const setMapBounds = useImagesStore((state) => state.setMapBounds);
 
   const title =
     isSearchActive && images.length > 0
@@ -52,19 +30,39 @@ export const Home = () => {
 
   return (
     <div className="relative flex h-full flex-col pr-6">
+      {/* Map Filter Status Banner */}
+      {mapBounds && (
+        <div className="bg-primary/10 border-primary/20 mb-4 flex items-center justify-between rounded-lg border px-4 py-2 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span className="text-muted-foreground">
+              Filtering by Map View ({filteredImages.length} results)
+            </span>
+          </div>
+          <button
+            onClick={() => setMapBounds(null)}
+            className="text-primary hover:underline font-medium cursor-pointer"
+          >
+            Clear Map Filter
+          </button>
+        </div>
+      )}
+
       {/* Gallery Section */}
       <div
         ref={scrollableRef}
         className="hide-scrollbar flex-1 overflow-x-hidden overflow-y-auto"
       >
-        {images.length > 0 ? (
+        {filteredImages.length > 0 ? (
           <ChronologicalGallery
-            images={images}
+            images={filteredImages}
             showTitle={true}
             title={title}
             onMonthOffsetsChange={setMonthMarkers}
             scrollContainerRef={scrollableRef}
           />
+        ) : mapBounds ? (
+          <FilteredEmptyState onClearFilter={() => setMapBounds(null)} />
         ) : (
           <EmptyGalleryState />
         )}

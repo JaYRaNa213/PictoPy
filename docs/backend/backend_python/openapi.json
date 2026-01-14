@@ -1117,9 +1117,14 @@
             "in": "query",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/InputType",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/InputType"
+                }
+              ],
               "description": "Choose input type: 'path' or 'base64'",
-              "default": "path"
+              "default": "path",
+              "title": "Input Type"
             },
             "description": "Choose input type: 'path' or 'base64'"
           }
@@ -1692,6 +1697,24 @@
         ],
         "title": "FolderDetails"
       },
+      "GPSModel": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "title": "GPSModel"
+      },
       "GetAlbumImagesRequest": {
         "properties": {
           "password": {
@@ -2199,7 +2222,6 @@
           "metadata": {
             "anyOf": [
               {
-                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -2299,27 +2321,15 @@
             "type": "string",
             "title": "Item Type"
           },
-          "latitude": {
+          "gps": {
             "anyOf": [
               {
-                "type": "number"
+                "$ref": "#/components/schemas/GPSModel"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Latitude"
-          },
-          "longitude": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Longitude"
+            ]
           },
           "location": {
             "anyOf": [

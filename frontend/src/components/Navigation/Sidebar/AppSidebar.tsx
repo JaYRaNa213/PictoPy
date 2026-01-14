@@ -11,6 +11,7 @@ import {
 import {
   Bolt,
   Home,
+  Earth,
   Sparkles,
   Heart,
   Video,
@@ -47,6 +48,7 @@ export function AppSidebar() {
 
   const menuItems = [
     { name: 'Home', path: `/${ROUTES.HOME}`, icon: Home },
+    { name: 'Map', path: `/${ROUTES.MAP}`, icon: Earth },
     { name: 'AI Tagging', path: `/${ROUTES.AI}`, icon: Sparkles },
     { name: 'Favourites', path: `/${ROUTES.FAVOURITES}`, icon: Heart },
     { name: 'Videos', path: `/${ROUTES.VIDEOS}`, icon: Video },

@@ -6,8 +6,10 @@ export interface ImageMetadata {
   file_location: string;
   file_size: number;
   item_type: string;
-  latitude?: number;
-  longitude?: number;
+  gps?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export interface Image {
