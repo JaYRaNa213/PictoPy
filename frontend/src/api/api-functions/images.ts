@@ -12,3 +12,9 @@ export const fetchAllImages = async (
   );
   return response.data;
 };
+export const deleteImage = async (imageId: string): Promise<APIResponse> => {
+  const response = await apiClient.delete<APIResponse>(
+    imagesEndpoints.deleteImage(imageId),
+  );
+  return response.data;
+};

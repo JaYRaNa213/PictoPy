@@ -7,7 +7,7 @@ import {
   Heart,
   Info,
   Copy,
-
+  Trash2,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Image } from '@/types/Media';
@@ -26,6 +26,8 @@ import { useDispatch } from 'react-redux';
 import { invoke } from '@tauri-apps/api/core';
 
 import { showInfoDialog } from '@/features/infoDialogSlice';
+import { deleteImage } from '@/api/api-functions/images';
+import { removeImage } from '@/features/imageSlice';
 
 interface ImageCardViewProps {
   image: Image;
@@ -96,6 +98,34 @@ export function ImageCard({
     } else if (onClick) {
       // Fallback to old behavior if no handler provided
       onClick();
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this image? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      const response = await deleteImage(image.id);
+      if (response.success) {
+        dispatch(removeImage(image.id));
+        dispatch(
+          showInfoDialog({
+            title: 'Success',
+            message: 'Image deleted successfully',
+            variant: 'success',
+          }),
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      dispatch(
+        showInfoDialog({
+          title: 'Error',
+          message: 'Failed to delete image',
+          variant: 'error',
+        }),
+      );
     }
   };
 
@@ -195,6 +225,16 @@ export function ImageCard({
         }}>
           <Info className="mr-2 h-4 w-4" />
           View Info
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}>
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete
         </ContextMenuItem>
 
       </ContextMenuContent>

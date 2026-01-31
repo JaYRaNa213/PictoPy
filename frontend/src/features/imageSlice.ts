@@ -26,8 +26,7 @@ const imageSlice = createSlice({
         state.currentViewIndex = index;
       } else {
         console.warn(
-          `Invalid image index: ${index}. Valid range: -1 to ${
-            imageList.length - 1
+          `Invalid image index: ${index}. Valid range: -1 to ${imageList.length - 1
           }`,
         );
       }
@@ -40,10 +39,18 @@ const imageSlice = createSlice({
       state.images = [];
       state.currentViewIndex = -1;
     },
+    removeImage(state, action: PayloadAction<string>) {
+      state.images = state.images.filter((img) => img.id !== action.payload);
+    },
   },
 });
 
-export const { setImages, setCurrentViewIndex, closeImageView, clearImages } =
-  imageSlice.actions;
+export const {
+  setImages,
+  setCurrentViewIndex,
+  closeImageView,
+  clearImages,
+  removeImage,
+} = imageSlice.actions;
 
 export default imageSlice.reducer;
